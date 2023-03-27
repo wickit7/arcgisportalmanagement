@@ -27,7 +27,7 @@ The JSON schema and the set of JSON parameters that can be used are described in
 ## Migrate ArcGIS Portal Groups
 The script [1_clone_groups.py](migrate/1_clone_groups.py) can be used to migrate ArcGIS Portal Groups from one Portal (e.g. test stage) to another Portal (e.g. productive stage). A sample json file is found in the folder [tutorial](migrate/tutorial):
 
-- [1_clone_groups.json](migrate/1_clone_groups.json): Migrate ArcGIS Portal Groups.
+- [1_clone_groups.json](migrate/tutorial/1_clone_groups.json): Migrate ArcGIS Portal Groups.
 
 The JSON schema and the set of JSON parameters that can be used are described in the README file [PARAMETERS_MIGRATE_GROUPS.md](migrate/PARAMETERS_MIGRATE_GROUPS.md).
 
