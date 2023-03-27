@@ -69,7 +69,7 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-    #paramFiles = [r'K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\tutorial\publish_webtool_ExportStandorteVS_test.json']
+    #paramFiles = [r'C:\temp\tutorial\publish_webtool_ExportStandorteVS_test.json']
 
     # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
