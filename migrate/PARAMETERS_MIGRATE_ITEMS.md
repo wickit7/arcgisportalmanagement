@@ -21,6 +21,6 @@ The same sharing options as the item in the "source" Portal will be used for the
 | clone_source_items/copy_global_ids | Requires that the previous parameter is set to True. If True, the copied features retain their global IDs. Default is False (optional). Automatically set to True if Item is hosted. (optional). | - |
 | clone_source_items/search_existing_items | Specifies whether elements that have already been cloned should be searched for in the target Portal and reused instead of being cloned again. "True" (default) or "False". | - |
 
-In the JSON, check the order when listing the items to be cloned! 
-- First, list the items that are not dependent on the items listed after them. If, for example, a web map application is cloned, all included items (e.g. maps, layers) should already be cloned.
+Notes:
+- In the JSON, check the order when listing the items to be cloned!First, list the items that are not dependent on the items listed after them. If, for example, a web map application is cloned, all included items (e.g. maps, layers) should already be cloned.
 - BUG-000150518: Python API's clone_items Fails to clone web application Items between two ArcGIS Portals when preserve_item_id parameter is "True".
