@@ -1,0 +1,42 @@
+{
+"stage": "TEST",
+"portal_url": "https://xxx.xxx.xx/portal",	
+"federated_server_url": "https://xxx.xxx.xx/server",
+"sign_in_user": "username@domain",
+"toolbox_name": "C:/Temp/tutorial/Schulraumplanung.tbx",
+"tool_name": "ExportStandorteVS",
+"tool_parameters": ["https://xxx.xxx.xx/rest/services/SLU/Primarschule/FeatureServer/3", "C:/Temp/ExportStandorteVS.xlsx", "True", "True"],
+"service_name": "ExportStandorteVS_tutorial",
+"copy_data_to_server": "False",
+"overwrite_existing_service": "True",
+"server_folder": "Test",
+"portal_folder": "Test",
+"service_documents": "C:/Temp/tutorial/",
+"server_type": "MY_HOSTED_SERVICES",
+"execution_type": "Synchronous",
+"result_map_server": "False",
+"show_messages": "Info",
+"maximum_records": "5000",
+"min_instances": "2",
+"max_instances": "3",
+"max_usage_time": "600",
+"max_wait_time": "60",
+"max_idle_time": "1800",
+"capabilities": "",
+"constant_values": "",
+"choice_lists": "",
+"metadata": {
+	"credits": "© Geoinformationszentrum Stadt Luzern",
+	"description": "Standorte Volksschule exportieren",
+	"summary": "Das Tool kann verwendet werden, um Standorte der Volksschule (Kindergarten, Primarschule, Sekundarschule, Schulunterstuetzung und Betreuungseinrichtung) zu exportieren",
+	"tags": "Volksschule,Schule,Export,xlsx",
+	"use_limitations": "© Geoinformationszentrum Stadt Luzern"
+	},
+"share": {
+	"in_override": "OVERRIDE_DEFINITION",
+	"in_my_contents": "SHARE_ONLINE",
+	"in_public": "PRIVATE",
+	"in_organization": "NO_SHARE_ORGANIZATION",
+	"in_groups": ["test"]
+	}
+ }

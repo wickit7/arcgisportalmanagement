@@ -1,0 +1,53 @@
+{
+"stage": "TEST",
+"portal_url": "https://xxx.xxx.xx/portal",	
+"federated_server_url": "https://xxx.xxx.xx/server",
+"sign_in_user": "username@domain",
+"aprx": "C:/Temp/tutorial/tutorial.aprx",
+"map": "citymaps_viewer",
+"service_name": "citymaps_map_cache_predefined",
+"service_type": "MAP_IMAGE",
+"enable_feature_access": "False",
+"check_unique_ID_assignment": "True",
+"copy_data_to_server": "False",
+"overwrite_existing_service": "True",
+"server_folder": "Test",
+"portal_folder": "Test",
+"service_documents": "C:/Temp/tutorial",
+"share": {
+	"in_override": "OVERRIDE_DEFINITION",
+	"in_my_contents": "SHARE_ONLINE",
+	"in_public": "PRIVATE",
+	"in_organization": "NO_SHARE_ORGANIZATION",
+	"in_groups": ["test"]
+	},
+"metadata": {
+	"credits": "© Geoinformationszentrum Stadt Luzern",
+	"description": "Citymaps map",
+	"summary": "Map with POIs to test the publishing of a service with cache",
+	"tags": "test",
+	"use_limitations": "© Geoinformationszentrum Stadt Luzern"
+	},
+"enable_cache": {
+	"service_cache_directory": "D:/arcgisserver/directories/arcgiscache",
+	"predefined_tiling_scheme": "C:/Temp/tutorial/tiling schema/Tilingschema_slu.xml", 	
+	"tiling_scheme_type": "PREDEFINED",
+	"scales_type": "STANDARD",
+	"tile_origin":"-27386400 31814500",
+	"num_of_scales": "7",
+	"dots_per_inch": "96",
+	"tile_size": "256 x 256",
+	"scales":"25000;10000;5000;2000;1000;500;200",
+	"cache_tile_format": "PNG32",
+	"tile_compression_quality":"0",
+	"storage_format": "COMPACT"
+	},
+"manage_cache":	{
+	"scales": "25000;10000;5000;2000;1000;500;200",
+	"update_mode":"RECREATE_ALL_TILES",
+	"num_of_caching_service_instances": "3",
+	"area_of_interest": "C:/Temp/tutorial/Cache_extents/Default.gdb/extend_slu",
+	"update_extent": "2661921.1466 1209525.714 2669472.9516 1213314.2927",
+	"wait_for_job_completion": "Wait"
+	}
+}
