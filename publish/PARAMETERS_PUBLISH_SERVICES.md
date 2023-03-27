@@ -15,7 +15,7 @@
 | layer | Name of the layer to be published. If no layer is specified, the entire map is published (optional). | "Playground" |
 | service_name | Name of the service that will be created.| "Playground" |
 | server_folder | Folder on the server in which the service is published| "TEST" |
-| portal_folder | Folder on the portal interface (under "own content") in which the service is published| "TEST" |
+| portal_folder | Folder on the portal interface (in "my content") in which the service is published| "TEST" |
 | service_type | "FEATURE", "TILE" or "MAP_IMAGE" (default).| "MAP_IMAGE" |
 | service_documents | Path in which the SD files will be stored.| "C:/Temp/tutorial" |
 | log_folder | Path to the folder where the log file should be saved (default = "path service_documents"/Logs).| "C:/Temp/Logs" |
