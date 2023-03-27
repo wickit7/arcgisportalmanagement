@@ -1,0 +1,1 @@
+Use the scripts in the folder publish to publish a service to different stages (servers).

@@ -1,0 +1,18 @@
+{
+	"source_url": "https://xxx.test.xx/portal",
+	"target_url": "https://xxx.prod.xx/portal",
+	"sign_in_user": "username@domain",
+	"replace_urls": {"/test.": "/prod."},
+	"clone_source_items":[
+		{
+        "item_id": "b573ca4e4a2a4b3db4eae797f36678ae",
+        "folder": "Test",
+		"preserve_item_id": "True"
+		},
+		{
+        "item_id": "e38b8019d8f2462cb26824a6d602dc33",
+        "folder": "Test",
+		"preserve_item_id": "True"
+		}
+	]
+}

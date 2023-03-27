@@ -1,0 +1,1 @@
+Use the scripts in the folder "publish" to publish the scripts to different servers (stages).

@@ -1,0 +1,6 @@
+{
+	"source_url": "https://xxx.test.xx/portal",
+	"target_url": "https://xxx.prod.xx/portal",
+	"sign_in_user": "username@domain",
+	"clone_user_names": ["TestUser1@SLU","TestUser2@SLU"]
+}
