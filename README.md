@@ -32,9 +32,9 @@ The script [1_clone_groups.py](migrate/1_clone_groups.py) can be used to migrate
 The JSON schema and the set of JSON parameters that can be used are described in the README file [PARAMETERS_MIGRATE_GROUPS.md](migrate/PARAMETERS_MIGRATE_GROUPS.md).
 
 ## Migrate ArcGIS Portal Items
-After publishing referenced services to different stages ([publish](publish)), the script [3_clone_items.py](migrate/3_clone_items.py) can be used to migrate ArcGIS Portal Items (e. g. not referenced services, Web Map's or Web Map Application's) from one Portal (e.g. test stage) to another Portal (e.g. productive stage). A sample json file is found in the folder [migrate/tutorial](tutorial):
+After publishing referenced services to different stages ([publish](publish)), the script [3_clone_items.py](migrate/3_clone_items.py) can be used to migrate ArcGIS Portal Items (e. g. not referenced services, Web Map's or Web Map Application's) from one Portal (e.g. test stage) to another Portal (e.g. productive stage). A sample json file is found in the folder [tutorial](migrate/tutorial):
 
-- [migrate/tutorial/3_clone_items.json](3_clone_items.json): Migrate ArcGIS Portal Items.
+- [3_clone_items.json](migrate/tutorial/3_clone_items.json): Migrate ArcGIS Portal Items.
 
 The JSON schema and the set of JSON parameters that can be used are described in the README file [PARAMETERS_MIGRATE_ITEMS.md](migrate/PARAMETERS_MIGRATE_ITEMS.md).
 
