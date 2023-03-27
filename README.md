@@ -1,4 +1,4 @@
-# ArcGIS Portal: Scripts for publishing services and migrating items (arcgisportalmanagement)
+# ArcGIS Enterprise-Portal: Scripts for publishing services and migrating items (arcgisportalmanagement)
 The scripts are designed to automate tasks in the ArcGIS Portal environment. JSON files are used to execute the scripts with the desired parameters.
 
 ## Publishing ArcGIS Services
