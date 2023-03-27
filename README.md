@@ -1,2 +1,5 @@
-# arcgisportalmanagement
-publish ArcGIS services, migrate ArcGIS portal users, groupes and items.
+# ArcGIS Portal: Scripts for publishing services and migrating items (arcgisportalmanagement)
+The scripts are designed to automate tasks in the ArcGIS Portal environment.
+
+
+
