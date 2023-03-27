@@ -1,5 +1,5 @@
 # JSON file input parameters for publishing webtools to ArcGIS Portal
-- A description of the paramters for the script [publish_service_webtool.py](publish_service_webtool.py).
+- A description of the paramters for the script [publish_webtool_portal.py](publish_webtool_portal.py).
 - Example JSON files are found in the [tutorial](tutorial) folder.
 - A general description of the script is found in the [README.md](../README.md) file.
 
