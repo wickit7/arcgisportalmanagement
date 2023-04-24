@@ -110,6 +110,10 @@ if __name__ == "__main__":
                     layer_name = data["layer"]
                 else:
                     layer_name = None #default
+                if "table" in data:
+                    table_name = data["table"]
+                else:
+                    table_name = None #default
                 service_name = data["service_name"]
                 server_folder = data["server_folder"]
                 portal_folder = data["portal_folder"]
@@ -269,10 +273,10 @@ if __name__ == "__main__":
                 server_type = "FEDERATED_SERVER"
             # If a layer is specified, only the layer is published, not the entire map.
             if layer_name:
-                # list all layer
+                # list all layers
                 layers_list = m.listLayers(layer_name)
                 found_layer = False
-                # get the correct map
+                # get the correct layer
                 for layer in layers_list:
                     if layer.name == layer_name:
                         logger.info(f'The layer "{layer.name}" will be published as service "{service_name}"')
@@ -283,6 +287,21 @@ if __name__ == "__main__":
                 if not found_layer:
                     logger.error(f'The layer "{layer_name}" was not found in the aprx!')
                     raise ValueError(f'The layer "{layer_name}" was not found in the aprx!')
+            elif table_name:
+                # list all tables
+                table_list = m.listTables(table_name)
+                found_table = False
+                # get the correct table
+                for table in table_list:
+                    if table.name == table_name:
+                        logger.info(f'The table "{table.name}" will be published as service "{service_name}"')
+                        # create MapImageSharingDraft
+                        sddraft = m.getWebLayerSharingDraft(server_type, service_type, service_name, [table])
+                        logger.info('Created sd draft object')
+                        found_table = True
+                if not found_table:
+                    logger.error(f'The table "{table_name}" was not found in the aprx!')
+                    raise ValueError(f'The table "{table_name}" was not found in the aprx!')
             else: 
                 logger.info(f'The map "{m.name}" will be published as service "{service_name}"')
                 # create MapImageSharingDraft

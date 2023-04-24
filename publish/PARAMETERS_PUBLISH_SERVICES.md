@@ -12,7 +12,8 @@
 | sign_in_user | User with whom the portal is to be logged in → becomes owner of the published content. Alternatively, use the parameters "cert_file" and "key_file" to log in.| "username@domain" |
 | aprx | Path to the ArcGIS Pro project with the maps/layers to be published.| "C:/Temp/tutorial/tutorial.aprx" |
 | map | Name of the map in the ArcGIS Pro project with the data to be published.| "citymaps_editor" |
-| layer | Name of the layer to be published. If no layer is specified, the entire map is published (optional). | "Playground" |
+| layer | Name of the layer to be published. If no layer (or table) is specified, the entire map is published (optional). | "Playground" |
+| table | Name of the table to be published. If no table (or layer) is specified, the entire map is published (optional). | "Items" |
 | service_name | Name of the service that will be created.| "Playground" |
 | server_folder | Folder on the server in which the service is published| "TEST" |
 | portal_folder | Folder on the portal interface (in "my content") in which the service is published| "TEST" |
