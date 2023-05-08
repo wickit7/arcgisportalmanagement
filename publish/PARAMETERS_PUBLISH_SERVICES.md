@@ -45,7 +45,7 @@
 | enable_cache/dots_per_inch | Dots per inch.| "96" (default) |
 | enable_cache/tile_size | Tile size. | "256 x 256" (default) |
 | enable_cache/predefined_tiling_scheme | Path to tiling scheme XML file (optional). | "C:/Temp/tutorial/tiling schema/Tilingschema_slu.xml" |
-| enable_cache/tile_origin | Origin of the tiles. | "96" (default) |
+| enable_cache/tile_origin | Origin of the tiles. | "-27386400 31814500" (optional) |
 | enable_cache/scales | Scales separated by semicolons. (optional)|  "25000;10000;5000;2000;1000;500;200"  |
 | enable_cache/cache_tile_format | Cache tile format.| "PNG" (default) |
 | enable_cache/tile_compression_quality | Tile compression quality.| "0" (default) |
