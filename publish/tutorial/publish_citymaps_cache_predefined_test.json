@@ -7,7 +7,6 @@
 "map": "citymaps_viewer",
 "service_name": "citymaps_map_cache_predefined",
 "service_type": "MAP_IMAGE",
-"enable_feature_access": "False",
 "check_unique_ID_assignment": "True",
 "copy_data_to_server": "False",
 "overwrite_existing_service": "True",

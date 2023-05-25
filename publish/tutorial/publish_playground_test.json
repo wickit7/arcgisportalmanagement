@@ -8,7 +8,7 @@
 "layer": "Playground",	
 "service_name": "Playground",
 "service_type": "MAP_IMAGE",
-"enable_feature_access": "True",
+"enable_extensions": ["FeatureServer"],
 "check_unique_ID_assignment": "True",
 "copy_data_to_server": "False",
 "overwrite_existing_service": "True",

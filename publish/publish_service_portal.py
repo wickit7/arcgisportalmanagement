@@ -10,11 +10,10 @@
 # -----------------------------------------------------------------------------
 import os, sys, logging, json, time, datetime
 import arcpy
-from arcgis.gis import GIS
+import arcgis
 from getpass import getpass
 import xml.dom.minidom as DOM
 from IPython.display import display
-
 
 def init_logging(file)  -> None:
     """Initialises logging to a file and on the console.
@@ -69,8 +68,7 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-    #paramFiles = [r'C:\Temp\tutorial\publish_citymaps_cache_test.json']
-    
+
     # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
 
@@ -126,10 +124,18 @@ if __name__ == "__main__":
                     service_type = data["service_type"]
                 else:
                     service_type = "MAP_IMAGE" #default
-                enable_feature_access = False #default
+                if "enable_extensions" in data:
+                    enable_extensions = data["enable_extensions"]
+                else:
+                    enable_extensions = None
+                enable_feature_access = False #default #depreciated parameter, use parameter "enable_extensions"!
                 if "enable_feature_access" in data:
                     if data["enable_feature_access"] == "True":
-                        enable_feature_access = True
+                        if enable_extensions:
+                            if "FeatureServer" not in enable_extensions:
+                                enable_extensions.append("FeatureServer")
+                        else:
+                            enable_extensions = ["FeatureServer"]
                 check_unique_ID_assignment = True #default
                 if "check_unique_ID_assignment" in data:
                     if data["check_unique_ID_assignment"] == "False":
@@ -246,7 +252,7 @@ if __name__ == "__main__":
                     count += 1
                     logged_in = True
                     logger.info(f'Successfully logged in')  
-                
+
         ## create sd draft file
         # name of the output files
         try:
@@ -323,7 +329,7 @@ if __name__ == "__main__":
         sddraft.overwriteExistingService = overwrite_existing_service
         sddraft.portalFolder = portal_folder
         sddraft.serverFolder = server_folder
-        # update service definition with metadata
+        # update service definition with metadata (not really necessary -> later in the script with arcgis api)
         if metadata:
             sddraft.credits = metadata["credits"]
             sddraft.description = metadata["description"]
@@ -339,40 +345,39 @@ if __name__ == "__main__":
             logger.error(f'Creating sd draft file failed: {e.args[0]}')
             raise ValueError(f'Creating sd draft file failed: {e.args[0]}')
 
-        ## allow feature access (feature Layer)
-        logger.info("Update sddraft file to allow feature access")
-        if enable_feature_access:
-            # read sd draft file
-            doc = DOM.parse(sddraft_filename)
-            # find all elements with the name 'TypeName'
-            typeNames = doc.getElementsByTagName('TypeName')
-            for typeName in typeNames:
-                # update TypeName settings
-                if typeName.firstChild.data == "FeatureServer":
-                    extension = typeName.parentNode
-                    for extElement in extension.childNodes:
-                        # allow feature access
-                        if extElement.tagName == 'Enabled':
-                            extElement.firstChild.data = 'true'
-            # write result into a new file
-            logger.info("Create new sddraft file")
-            sddraft_mod_xml_file = os.path.join(service_documents, f'{filename}_mod_xml.sddraft')
-            f = open(sddraft_mod_xml_file, 'w')
-            # encoding angeben wegen Umlauten
-            doc.writexml(f, encoding = "ISO-8859-1")
-            f.close()
-            # delete the old file
-            logger.info("Delete the old sddraft file")
-            os.remove(sddraft_filename)
-            logger.info("Rename the new sddraft file to have the original name")
-            # rename the new file
-            os.rename(sddraft_mod_xml_file, sddraft_filename)
-            logger.info("Setting 'feature access' activated")
-            logger.info("Updated SdDraft file")
-
-        else:
-            logger.info("Setting 'feature access' is not activated")
-
+        ## allow feature access (feature Layer) -> comment out -> enable after publishing -> see section ##enable extensions
+        # logger.info("Update sddraft file to allow feature access")
+        # if enable_feature_access:
+        #     # read sd draft file
+        #     doc = DOM.parse(sddraft_filename)
+        #     # find all elements with the name 'TypeName'
+        #     typeNames = doc.getElementsByTagName('TypeName')
+        #     for typeName in typeNames:
+        #         # update TypeName settings
+        #         if typeName.firstChild.data == "FeatureServer":
+        #             extension = typeName.parentNode
+        #             for extElement in extension.childNodes:
+        #                 # allow feature access
+        #                 if extElement.tagName == 'Enabled':
+        #                     extElement.firstChild.data = 'true'
+        #     # write result into a new file
+        #     logger.info("Create new sddraft file")
+        #     sddraft_mod_xml_file = os.path.join(service_documents, f'{filename}_mod_xml.sddraft')
+        #     f = open(sddraft_mod_xml_file, 'w')
+        #     # encoding angeben wegen Umlauten
+        #     doc.writexml(f, encoding = "ISO-8859-1")
+        #     f.close()
+        #     # delete the old file
+        #     logger.info("Delete the old sddraft file")
+        #     os.remove(sddraft_filename)
+        #     logger.info("Rename the new sddraft file to have the original name")
+        #     # rename the new file
+        #     os.rename(sddraft_mod_xml_file, sddraft_filename)
+        #     logger.info("Setting 'feature access' activated")
+        #     logger.info("Updated SdDraft file")
+        # else:
+        #     logger.info("Setting 'feature access' is not activated")
+        
         ## create sd file
         # delete sd file if already exists
         if os.path.exists(sd_filename):
@@ -382,7 +387,8 @@ if __name__ == "__main__":
         logger.info("Create sd file: Start staging")
         arcpy.server.StageService(sddraft_filename, sd_filename)
         logger.info("Created sd file")
-        # alternative : Include automatic registering of database at server
+        # may include automatic registering of database at server 
+        # -> comment out because not "safe" if unintentional wrong database connection is used
         # stage the service and analyze the .sddraft file for registered data store 
         # continue publishing only if data store is registered
         # stage_service = True
@@ -414,19 +420,60 @@ if __name__ == "__main__":
         else:
             logger.info("Pulish service")
             service = arcpy.server.UploadServiceDefinition(in_sd_file = sd_filename, in_server = federated_server_url, in_startupType = in_startupType)    
-
         logger.info("published service")
-        #display(service)
 
-        ## move service to correct portal folder (bug in publish function above?)
-        # When publishing an SD file, an error message appears if the portal folder does not yet exist. 
-        # And if it does exist, the item is only displayed under all contents. Therefore the ArcGIS API for Python is used here.
+        ## Use ArcGIS API for Python for further settings
+        # log in
         logger.info('Connect to portal for using ArcGIS API for Python')
-        # sign in to the portal (only the first time or if portal_url changes)
-        logger.info("Log in at the portal for using the arcgis api for python")
-        target = GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
-        logger.info(f"target: {target}")
-        # search folders of the singed in user
+        target = arcgis.GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
+        logger.info(f"target portal: {target}")
+
+        # get the index of the server where the service was published
+        gis_servers_properties = target.admin.servers.properties
+        server_index = None
+        for ii, server_prop in enumerate(gis_servers_properties.servers): # assuming servers have same indexes as in target.admin.servers.list()
+            if server_prop.url == federated_server_url:
+                server_index = ii
+                break
+        
+        if server_index is None:
+            logger.error(f'Server "{federated_server_url}" not found.')
+        
+        # get the correct server
+        server = target.admin.servers.list()[server_index]
+        logger.info(f'Search service on server {server_prop.url}')
+
+        # get the service
+        service = None
+        for service in server.services.list(server_folder): # assuming there is only one service with that name in that folder
+            if service.properties.serviceName == service_name:
+                break
+
+        if not service:
+            logger.error(f'Service "{service_name}" not found on server "{server.url}".')
+       
+        # Retrieve the service information
+        service_data = service.properties
+
+        # enable the extensions
+        if enable_extensions:
+            logger.info(f'Enable the service extensions: {enable_extensions}')
+            for extension in service_data["extensions"]:
+                if extension["typeName"] in enable_extensions:
+                    if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
+                        logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
+                    extension["enabled"] = "true"
+                    extension["properties"]["keyword"] = ""
+            # convert PropertyMap to json
+            service_data_json = json.dumps(dict(service_data))
+            # Edit the service
+            edit_respone = service.edit(service_data_json)
+            # Wait 30 seconds for the service to restart
+            time.sleep(30)
+            # Retrieve the updated service information
+            service_data = service.properties
+
+        # create portal folder for the singed in user
         create_folder = True
         for folder in target.users.me.folders:
             if portal_folder == folder['title']:
@@ -435,23 +482,44 @@ if __name__ == "__main__":
                 create_folder = False         
         if create_folder:
             logger.info(f'Create portal folder "{portal_folder}"')
-            portal_folder_item = target.content.create_folder(portal_folder) 
-        #display(portal_folder_item)  
-        # get poral Item of the published service
-        target_items_search = target.content.search(query=f"title: {service_name} & owner: {target.users.me.username}")
-        if target_items_search:
-            # check if exact match
-            for item in target_items_search:
-                if item.title == service_name:
-                    logger.info(f'Move item "{item.title}" of type "{item.type}" to the folder "{portal_folder}"' )
-                    item.move(portal_folder, target.users.me.username)
-                    #display(item)
-                    target_item = item
-                else:
-                    logger.info(f'Item "{item.title}" does not exactly match..')
-        else:
-            logger.error(f'Item "{service_name}" could not be found in the portal!')
+            portal_folder_item = target.content.create_folder(portal_folder)
 
+        # get a comma-separated list of group IDs
+        group_ids_str = None
+        group_ids = None
+        if share['in_groups']:
+            group_ids = []
+            for group_name in share['in_groups']:
+                groups = target.groups.search(query=f"title:{group_name}")
+                for group in groups:
+                    if group.title == group_name:
+                        group_ids.append(group.id)
+            group_ids_str = ",".join(group_ids)
+ 
+        # get the poral items of the published service
+        for portal_item in service_data["portalProperties"]["portalItems"]:
+            item_id = portal_item["itemID"]
+            items = target.content.search(query=f"id:{item_id}")
+            if items:
+                item = items[0]
+            else:
+                logger.error(f'Item not found with the specified itemID "{item_id}".')
+            # move the item to the portal folder
+            logger.info(f'Move item "{item.title}" of type "{item.type}" to the folder "{portal_folder}"' )
+            item.move(portal_folder, target.users.me.username)
+            # update item with metadata
+            item.update(metadata)
+            # share item
+            if share["in_public"] == "PUBLIC":
+                share_everyone = True
+            else:
+                share_everyone = False
+            if share["in_organization"] == "SHARE_ORGANIZATION":
+                share_org = True
+            else:
+                share_org = False
+            logger.info(f'Share item public:"{share_everyone}", organisation:"{share_org}", groups:"{group_ids_str}"' )
+            item.share(everyone=share_everyone, org=share_org, groups=group_ids)
 
         ## enable cache
         if enable_cache:
@@ -484,16 +552,10 @@ if __name__ == "__main__":
         else:
             logger.info('Do not create cache')
 
-        # ## restart service (not necessary)     
+        # # restart service (not necessary)     
         # if enable_cache and manage_cache:
-        #     # get the ArcGIS feature service that you want to restart
-        #     gis_servers = target.admin.servers.list()
-        #     # restart specific service
-        #     for server in gis_servers:
-        #         for service in server.services.list(server_folder):
-        #             if service.properties.serviceName == service_name:
-        #                 restart = service.restart()
-        #                 logger.info(f'Restart service: {restart}')
+        #     restart = service.restart()
+        #     logger.info(f'Restart service: {restart}')
 
         ## manage cache
         if manage_cache:

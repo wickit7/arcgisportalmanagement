@@ -4,9 +4,11 @@ The scripts are designed to automate tasks in the ArcGIS Portal environment. JSO
 ## Publishing ArcGIS Services
 The script [publish_service_portal.py](publish/publish_service_portal.py) can be used to pusblish ArcGIS Services like WFS, WMS or WMTS. In the folder [tutorial](publish/tutorial) there are several json sample files:
 
-- [publish_playground_test.json](publish/tutorial/publish_playground_test.json): Publish a web feature layer with feature access (for publishing a standalone table use the parameter "table" instead of "layer")
+- [publish_playground_test.json](publish/tutorial/publish_playground_test.json): Publish a web feature layer with feature access (FeatureServer) (for publishing a standalone table use the parameter "table" instead of "layer")
 - [publish_citymaps_cache_test.json](publish/tutorial/publish_citymaps_cache_test.json): Publish a web feature layer, define cache schema and create cache tiles.
 - [publish_citymaps_cache_predefined_test.json](publish/tutorial/publish_citymaps_cache_predefined_test.json): Publish a web feature layer, define a cache schema based on a schema-file (xml) and create cache tiles.
+- [publish_playground_ogc_test.json](publish/tutorial/publish_playground_ogc_test.json): Publish a web feature layer with the extensions "FeatureServer" and "WMSServer" (OGC WMS) and "WFSServer" (OGC WFS).
+
 
 The JSON schema and the set of JSON parameters that can be used are described in the README file [PARAMETERS_PUBLISH_SERVICES.md](publish/PARAMETERS_PUBLISH_SERVICES.md).
 

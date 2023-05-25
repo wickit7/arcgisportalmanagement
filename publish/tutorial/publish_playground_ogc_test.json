@@ -1,0 +1,32 @@
+{
+"stage": "TEST",
+"portal_url": "https://xxx.xxx.xx/portal",	
+"federated_server_url": "https://xxx.xxx.xx/server",
+"sign_in_user": "username@domain",
+"aprx": "C:/Temp/tutorial/tutorial.aprx",
+"map": "citymaps_editor",
+"layer": "Playground",	
+"service_name": "Playground",
+"service_type": "MAP_IMAGE",
+"enable_extensions": ["FeatureServer" ,"WMSServer", "WFSServer"],
+"check_unique_ID_assignment": "True",
+"copy_data_to_server": "False",
+"overwrite_existing_service": "True",
+"server_folder": "TEST",
+"portal_folder": "Test",
+"service_documents": "C:/Temp/tutorial",
+"share": {
+	"in_override": "OVERRIDE_DEFINITION",
+	"in_my_contents": "SHARE_ONLINE",
+	"in_public": "PUBLIC",
+	"in_organization": "NO_SHARE_ORGANIZATION",
+	"in_groups": ["test"]
+	},
+"metadata": {
+	"credits": "© Geoinformationszentrum Stadt Luzern",
+	"description": "Playground places",
+	"summary": "Playground places used to test the publishing of a service",
+	"tags": "test",
+	"use_limitations": "© Geoinformationszentrum Stadt Luzern"
+	}
+ }

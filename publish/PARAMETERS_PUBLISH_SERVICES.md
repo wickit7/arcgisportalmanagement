@@ -20,7 +20,7 @@
 | service_type | "FEATURE", "TILE" or "MAP_IMAGE" (default).| "MAP_IMAGE" |
 | service_documents | Path in which the SD files will be stored.| "C:/Temp/tutorial" |
 | log_folder | Path to the folder where the log file should be saved (default = "path service_documents"/Logs).| "C:/Temp/Logs" |
-| enable_feature_access | If "True", a service layer with feature access is created in addition to the map image layer. If "False" (default), only the map image layer is created. Even if editing is not required, a feature service can be advantageous (e.g. filtering etc.).| "True" |
+| enable_extensions | A list of extenstions that are enabled after publishing the service. Possible entries are: FeatureServer, WMSServer, WFSServer, NetworkDiagramServer, TopographicProductionServer, TraceNetworkServer, ValidationServer, WCSServer, LRServer, ParcelFabricServer, VersionManagementServer, KmlServer, UtilityNetworkServer. (optional)| ["FeatureServer" ,"WMSServer", "WFSServer"] |
 | check_unique_ID_assignment | A Boolean that indicates whether your map is analyzed to confirm that the Allow assignment of unique numeric IDs for sharing web layers option in Map Properties is enabled (optional). | "True" (default)|
 | copy_data_to_server | If "True" the data will be published into the ArcGIS Portal Datastore. If "False" (defaut) the service will reference to the registered database.| "False" |
 | overwrite_existing_service | If "True" (default), an existing service is overwritten. If "False", an existing service will not be overwritten. | "True" |
