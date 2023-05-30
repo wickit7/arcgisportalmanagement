@@ -68,7 +68,6 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-
     # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
 
@@ -474,13 +473,13 @@ if __name__ == "__main__":
             service_data = service.properties
 
         # create portal folder for the singed in user
-        create_folder = True
+        create_folder__flag = True
         for folder in target.users.me.folders:
             if portal_folder == folder['title']:
                 logger.info(f'Portal folder "{portal_folder}" already exists')
                 portal_folder_item = folder
-                create_folder = False         
-        if create_folder:
+                create_folder__flag = False         
+        if create_folder__flag:
             logger.info(f'Create portal folder "{portal_folder}"')
             portal_folder_item = target.content.create_folder(portal_folder)
 
