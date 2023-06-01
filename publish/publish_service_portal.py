@@ -506,8 +506,17 @@ if __name__ == "__main__":
             # move the item to the portal folder
             logger.info(f'Move item "{item.title}" of type "{item.type}" to the folder "{portal_folder}"' )
             item.move(portal_folder, target.users.me.username)
+            # convert metadata keys for sddraft to metadata keys for arcis python api
+            new_metadata = metadata.copy()
+            if 'credits' in metadata:
+                new_metadata['accessInformation'] = new_metadata.pop('credits')
+            if 'use_limitations' in metadata:
+                new_metadata['licenseInfo'] = new_metadata.pop('use_limitations')
+            if 'summary' in metadata:
+                new_metadata['snippet'] = new_metadata.pop('summary')
             # update item with metadata
-            item.update(metadata)
+            item.update(new_metadata)
+
             # share item
             if share["in_public"] == "PUBLIC":
                 share_everyone = True
