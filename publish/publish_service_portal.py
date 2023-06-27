@@ -68,7 +68,7 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-   #paramFiles = [r"K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\OGD\publish_ogd_hochschule_test.json"]
+    paramFiles = [r"K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\OGD\gis_citymaps\publish_altersbetreuung_test.json"]
  
     # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
@@ -205,7 +205,7 @@ if __name__ == "__main__":
         else:
             print('no Parameter-JSON file specified')
             sys.exit()
-        
+
         ## start logging
         # create logfolder
         create_folder(log_folder)
@@ -253,6 +253,11 @@ if __name__ == "__main__":
                     count += 1
                     logged_in = True
                     logger.info(f'Successfully logged in')  
+
+            # sign in also to portal for using ArcGIS API for Python
+            logger.info('Connect to portal for using ArcGIS API for Python')
+            target = arcgis.GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
+            logger.info(f"target portal: {target}")
 
         ## create sd draft file
         # name of the output files
@@ -346,23 +351,70 @@ if __name__ == "__main__":
             logger.error(f'Creating sd draft file failed: {e.args[0]}')
             raise ValueError(f'Creating sd draft file failed: {e.args[0]}')
 
-        # allow feature access (FeatureServer)
-        logger.info("Update sddraft file to allow feature access")
-        if "FeatureServer" in enable_extensions:
-            # read sd draft file
+        ## adjust sddraft file to enable extenstions and to set sharing options
+        # read sd draft file
+        if enable_extensions or share:
             doc = DOM.parse(sddraft_filename)
+        # enable extensions (FeatureServer etc.) in sddraft
+        if enable_extensions:
+            logger.info("Update sddraft file to enable extensions")
             # find all elements with the name 'TypeName'
             typeNames = doc.getElementsByTagName('TypeName')
             for typeName in typeNames:
-                # update TypeName settings
-                if typeName.firstChild.data == "FeatureServer":
+                # update TypeName settings. Because of a Bug OGC services can not be staged. Enable later in the script with arcgis api.
+                if typeName.firstChild.data in enable_extensions and typeName.firstChild.data not in ["WMSServer", "WFSServer", "WCSServer"]: 
+                    logger.info(f'Enable extension "{typeName.firstChild.data}"')
                     extension = typeName.parentNode
                     for extElement in extension.childNodes:
-                        # allow feature access
+                        # enable extension
                         if extElement.tagName == 'Enabled':
                             extElement.firstChild.data = 'true'
 
-            # write result into a new file
+        ## set sharing options in sddraft
+        if share:
+            logger.info("Update sddraft file to set sharing options")
+            key_list = doc.getElementsByTagName('Key')
+            value_list = doc.getElementsByTagName('Value')
+            # change following to "true" to share
+            if share['in_public'] == "PUBLIC" or share['in_public'] == "True":
+                share_to_everyone = "true"
+            else:
+                share_to_everyone = "false"
+            if share['in_organization'] == "SHARE_ORGANIZATION" or share['in_organization'] == "True":
+                share_to_organisation = "true"
+            else:
+                share_to_organisation = "false"
+            if share['in_groups']:
+                # get a comma-separated list of group IDs
+                share_to_group = "true"
+                group_ids_str = None
+                group_ids = None
+                group_ids = []
+                for group_name in share['in_groups']:
+                    groups = target.groups.search(query=f"title:{group_name}")
+                    for group in groups:
+                        if group.title == group_name:
+                            group_ids.append(group.id)
+                group_ids_str = ",".join(group_ids)    
+            else:
+                share_to_group = "false"
+            # each key has a corresponding value
+            for i in range(key_list.length):
+                if key_list[i].firstChild.nodeValue == "PackageUnderMyOrg":
+                    logger.info(f'Share to organisation: "{share_to_organisation}"')
+                    value_list[i].firstChild.nodeValue = share_to_organisation
+                if key_list[i].firstChild.nodeValue == "PackageIsPublic":
+                    logger.info(f'Share to public: "{share_to_everyone}"')
+                    value_list[i].firstChild.nodeValue = share_to_everyone
+                # if key_list[i].firstChild.nodeValue == "PackageShareGroups": # share items with group later with ArcGIS API for Python
+                #     logger.info(f'Share to group: "{share_to_group}"')
+                #     value_list[i].firstChild.nodeValue = share_to_group
+                # if share_to_group == "true" and key_list[i].firstChild.nodeValue == "PackageGroupIDs":
+                #     logger.info(f'Share to groups: "{group_ids_str}"')
+                #     value_list[i].firstChild.nodeValue = group_ids_str
+
+        # write result into a new file
+        if enable_extensions or share:
             logger.info("Create new sddraft file")
             sddraft_mod_xml_file = os.path.join(service_documents, f'{filename}_mod_xml.sddraft')
             f = open(sddraft_mod_xml_file, 'w')
@@ -375,11 +427,7 @@ if __name__ == "__main__":
             logger.info("Rename the new sddraft file to have the original name")
             # rename the new file
             os.rename(sddraft_mod_xml_file, sddraft_filename)
-            logger.info("Setting 'feature access' activated")
-            logger.info("Updated SdDraft file")
-        else:
-            logger.info("Setting 'feature access' is not activated")
-        
+            logger.info("Updated SdDraft file")        
         
         ## create sd file
         # delete sd file if already exists
@@ -426,11 +474,6 @@ if __name__ == "__main__":
         logger.info("published service")
 
         ## Use ArcGIS API for Python for further settings
-        # log in
-        logger.info('Connect to portal for using ArcGIS API for Python')
-        target = arcgis.GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
-        logger.info(f"target portal: {target}")
-
         # get the index of the server where the service was published
         gis_servers_properties = target.admin.servers.properties
         server_index = None
@@ -458,13 +501,14 @@ if __name__ == "__main__":
         # Retrieve the service information
         service_data = service.properties
 
-        # enable the extensions
-        if enable_extensions:
-            logger.info(f'Enable the service extensions: {enable_extensions}')
+        # enable the extensions of the published service. Only "WMSServer", "WFSServer", "WCSServer" -> other extensions already enabled in sddraft.
+        if "WMSServer" in enable_extensions or "WFSServer" in enable_extensions or "WCSServer" in enable_extensions:
+            logger.info(f'Enable the ogc service extensions: {enable_extensions}')
             for extension in service_data["extensions"]:
-                if extension["typeName"] in enable_extensions and extension["typeName"] != "FeatureServer": #FeatureServer already enabled in sddraft
+                if extension["typeName"] in enable_extensions and extension["typeName"] in ["WMSServer", "WFSServer", "WCSServer"]: # other extensions already enabled in sddraft
                     if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
                         logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
+                    logger.warning(f'The portal Item of the "{extension["typeName"]}" service will get a new ItemID if the serivce already existed!')
                     extension["enabled"] = "true"
                     extension["properties"]["keyword"] = ""
 
@@ -487,18 +531,6 @@ if __name__ == "__main__":
         if create_folder__flag:
             logger.info(f'Create portal folder "{portal_folder}"')
             portal_folder_item = target.content.create_folder(portal_folder)
-
-        # get a comma-separated list of group IDs
-        group_ids_str = None
-        group_ids = None
-        if share['in_groups']:
-            group_ids = []
-            for group_name in share['in_groups']:
-                groups = target.groups.search(query=f"title:{group_name}")
-                for group in groups:
-                    if group.title == group_name:
-                        group_ids.append(group.id)
-            group_ids_str = ",".join(group_ids)
  
         # get the poral items of the published service
         for portal_item in service_data["portalProperties"]["portalItems"]:
