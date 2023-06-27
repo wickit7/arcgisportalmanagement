@@ -501,24 +501,24 @@ if __name__ == "__main__":
         service_data = service.properties
 
         # enable the extensions of the published service. Only "WMSServer", "WFSServer", "WCSServer" -> other extensions already enabled in sddraft.
-        if "WMSServer" in enable_extensions or "WFSServer" in enable_extensions or "WCSServer" in enable_extensions:
-            logger.info(f'Enable the ogc service extensions: {enable_extensions}')
-            for extension in service_data["extensions"]:
-                if extension["typeName"] in enable_extensions and extension["typeName"] in ["WMSServer", "WFSServer", "WCSServer"]: # other extensions already enabled in sddraft
-                    if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
-                        logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
-                    logger.warning(f'The portal Item of the "{extension["typeName"]}" service will get a new ItemID if the serivce already exists!')
-                    extension["enabled"] = "true"
-                    extension["properties"]["keyword"] = ""
-
-            # convert PropertyMap to json
-            service_data_json = json.dumps(dict(service_data))
-            # Edit the service
-            edit_respone = service.edit(service_data_json)
-            # Wait 30 seconds for the service to restart
-            time.sleep(30)
-            # Retrieve the updated service information
-            service_data = service.properties
+        if enable_extensions:
+            if "WMSServer" in enable_extensions or "WFSServer" in enable_extensions or "WCSServer" in enable_extensions:
+                logger.info(f'Enable the ogc service extensions: {enable_extensions}')
+                for extension in service_data["extensions"]:
+                    if extension["typeName"] in enable_extensions and extension["typeName"] in ["WMSServer", "WFSServer", "WCSServer"]: # other extensions already enabled in sddraft
+                        if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
+                            logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
+                        logger.warning(f'The portal Item of the "{extension["typeName"]}" service will get a new ItemID if the serivce already exists!')
+                        extension["enabled"] = "true"
+                        extension["properties"]["keyword"] = ""
+                # convert PropertyMap to json
+                service_data_json = json.dumps(dict(service_data))
+                # Edit the service
+                edit_respone = service.edit(service_data_json)
+                # Wait 30 seconds for the service to restart
+                time.sleep(30)
+                # Retrieve the updated service information
+                service_data = service.properties
 
         # create portal folder for the singed in user
         create_folder__flag = True
