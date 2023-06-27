@@ -507,7 +507,7 @@ if __name__ == "__main__":
                 if extension["typeName"] in enable_extensions and extension["typeName"] in ["WMSServer", "WFSServer", "WCSServer"]: # other extensions already enabled in sddraft
                     if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
                         logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
-                    logger.warning(f'The portal Item of the "{extension["typeName"]}" service will get a new ItemID if the serivce already existed!')
+                    logger.warning(f'The portal Item of the "{extension["typeName"]}" service will get a new ItemID if the serivce already exists!')
                     extension["enabled"] = "true"
                     extension["properties"]["keyword"] = ""
 
