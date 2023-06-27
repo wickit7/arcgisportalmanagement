@@ -346,38 +346,40 @@ if __name__ == "__main__":
             logger.error(f'Creating sd draft file failed: {e.args[0]}')
             raise ValueError(f'Creating sd draft file failed: {e.args[0]}')
 
-        ## allow feature access (feature Layer) -> comment out -> enable after publishing -> see section ##enable extensions
-        # logger.info("Update sddraft file to allow feature access")
-        # if enable_feature_access:
-        #     # read sd draft file
-        #     doc = DOM.parse(sddraft_filename)
-        #     # find all elements with the name 'TypeName'
-        #     typeNames = doc.getElementsByTagName('TypeName')
-        #     for typeName in typeNames:
-        #         # update TypeName settings
-        #         if typeName.firstChild.data == "FeatureServer":
-        #             extension = typeName.parentNode
-        #             for extElement in extension.childNodes:
-        #                 # allow feature access
-        #                 if extElement.tagName == 'Enabled':
-        #                     extElement.firstChild.data = 'true'
-        #     # write result into a new file
-        #     logger.info("Create new sddraft file")
-        #     sddraft_mod_xml_file = os.path.join(service_documents, f'{filename}_mod_xml.sddraft')
-        #     f = open(sddraft_mod_xml_file, 'w')
-        #     # encoding angeben wegen Umlauten
-        #     doc.writexml(f, encoding = "ISO-8859-1")
-        #     f.close()
-        #     # delete the old file
-        #     logger.info("Delete the old sddraft file")
-        #     os.remove(sddraft_filename)
-        #     logger.info("Rename the new sddraft file to have the original name")
-        #     # rename the new file
-        #     os.rename(sddraft_mod_xml_file, sddraft_filename)
-        #     logger.info("Setting 'feature access' activated")
-        #     logger.info("Updated SdDraft file")
-        # else:
-        #     logger.info("Setting 'feature access' is not activated")
+        # allow feature access (FeatureServer)
+        logger.info("Update sddraft file to allow feature access")
+        if "FeatureServer" in enable_extensions:
+            # read sd draft file
+            doc = DOM.parse(sddraft_filename)
+            # find all elements with the name 'TypeName'
+            typeNames = doc.getElementsByTagName('TypeName')
+            for typeName in typeNames:
+                # update TypeName settings
+                if typeName.firstChild.data == "FeatureServer":
+                    extension = typeName.parentNode
+                    for extElement in extension.childNodes:
+                        # allow feature access
+                        if extElement.tagName == 'Enabled':
+                            extElement.firstChild.data = 'true'
+
+            # write result into a new file
+            logger.info("Create new sddraft file")
+            sddraft_mod_xml_file = os.path.join(service_documents, f'{filename}_mod_xml.sddraft')
+            f = open(sddraft_mod_xml_file, 'w')
+            # encoding angeben wegen Umlauten
+            doc.writexml(f, encoding = "ISO-8859-1")
+            f.close()
+            # delete the old file
+            logger.info("Delete the old sddraft file")
+            os.remove(sddraft_filename)
+            logger.info("Rename the new sddraft file to have the original name")
+            # rename the new file
+            os.rename(sddraft_mod_xml_file, sddraft_filename)
+            logger.info("Setting 'feature access' activated")
+            logger.info("Updated SdDraft file")
+        else:
+            logger.info("Setting 'feature access' is not activated")
+        
         
         ## create sd file
         # delete sd file if already exists
@@ -460,11 +462,12 @@ if __name__ == "__main__":
         if enable_extensions:
             logger.info(f'Enable the service extensions: {enable_extensions}')
             for extension in service_data["extensions"]:
-                if extension["typeName"] in enable_extensions:
+                if extension["typeName"] in enable_extensions and extension["typeName"] != "FeatureServer": #FeatureServer already enabled in sddraft
                     if share["in_public"] != "PUBLIC" and extension["typeName"] in ["WFSServer", "WMSServer", 'WCSServer']:
                         logger.warning(f'00297: {extension["typeName"]} layers must be shared with everyone')
                     extension["enabled"] = "true"
                     extension["properties"]["keyword"] = ""
+                    
             # convert PropertyMap to json
             service_data_json = json.dumps(dict(service_data))
             # Edit the service
