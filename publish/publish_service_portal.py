@@ -253,10 +253,10 @@ if __name__ == "__main__":
                     logged_in = True
                     logger.info(f'Successfully logged in')  
 
-            # sign in also to portal for using ArcGIS API for Python
-            logger.info('Connect to portal for using ArcGIS API for Python')
-            target = arcgis.GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
-            logger.info(f"target portal: {target}")
+        # sign in also to portal for using ArcGIS API for Python
+        logger.info('Connect to portal for using ArcGIS API for Python')
+        target = arcgis.GIS(url=portal_url, username=sign_in_user, password=pw, verify_cert=False)
+        logger.info(f"target portal: {target}")
 
         ## create sd draft file
         # name of the output files
