@@ -464,12 +464,12 @@ if __name__ == "__main__":
         ## publish sd file
         if share:
             logger.info("Publish and share service")
-            service = arcpy.server.UploadServiceDefinition(
+            service_usd = arcpy.server.UploadServiceDefinition(
                     in_sd_file = sd_filename, in_server = federated_server_url, in_startupType = in_startupType, **share
                     )
         else:
             logger.info("Pulish service")
-            service = arcpy.server.UploadServiceDefinition(in_sd_file = sd_filename, in_server = federated_server_url, in_startupType = in_startupType)    
+            service_usd = arcpy.server.UploadServiceDefinition(in_sd_file = sd_filename, in_server = federated_server_url, in_startupType = in_startupType)    
         logger.info("published service")
 
         ## Use ArcGIS API for Python for further settings
@@ -573,7 +573,7 @@ if __name__ == "__main__":
                 logger.info(f'Create cache scheme with predefined parameters')
             # define correct url's
             server_rest_url = f'{federated_server_url}' + r'/rest'
-            rest_service = service[0].split("arcgis")
+            rest_service = service_usd[0].split("arcgis")
             service_url = server_rest_url + rest_service[1]
             try:
                 starttime = time.time()
