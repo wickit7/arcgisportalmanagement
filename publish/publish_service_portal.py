@@ -572,7 +572,7 @@ if __name__ == "__main__":
             else:
                 logger.info(f'Create cache scheme with predefined parameters')
             # define correct url's
-            server_rest_url = f'{federated_server_url}' + r'/rest'
+            server_rest_url = f'{federated_server_url}/rest'
             rest_service = service_usd[0].split("arcgis")
             service_url = server_rest_url + rest_service[1]
             try:
