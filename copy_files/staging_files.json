@@ -1,0 +1,12 @@
+{
+"copy_from": "C:/Temp/tutorial",
+"file_types": [".json", ".bat"],
+"replace_text_filename": {
+		"_test": "_prod"
+		},
+"replace_text_data" : {
+		"TEST": "PROD",
+		"_test": "_prod",
+		"maptest": "map"
+		}
+ }
