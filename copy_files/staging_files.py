@@ -54,8 +54,7 @@ def write_file(data, file_path):
 
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
-    #paramFile = sys.argv[0]
-    paramFile = r"C:\gitprojects\arcgisportalmanagement\copy_files\staging_files.json"
+    paramFile = sys.argv[0]
    
     if paramFile:        
         with open(paramFile, encoding='utf-8') as f:
