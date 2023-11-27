@@ -68,8 +68,9 @@ def create_folder(folder_path) -> None:
 
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
-    paramFile = arcpy.GetParameterAsText(0)
+    #paramFile = arcpy.GetParameterAsText(0)
     #paramFile = r'C:\Temp\tutorial\3_clone_items.json'
+    paramFile = r'\\gisfileprod\GIS\GIS_ADMIN\CITYMAPS_MASTER\Migrate\Portal\SLU\Betrieb Stadtplan\3_clone_items_tranche1.json'
 
     if paramFile:        
         with open(paramFile, encoding='utf-8') as f:
@@ -142,15 +143,15 @@ if __name__ == "__main__":
         except:
             logger.error(f"Source Item '{clone_source_item['item_id']}' was not found!'")        
             continue
-                            
+
         # check if item already exists in the targt portal
-        target_items_search = target.content.search(query=f"title: {source_item['title']}", item_type=source_item.type)
-        target_titles = [item.title for item in target_items_search]
-        if source_item.title in target_titles:
-            logger.warning(f"Item with the titel '{source_item.title}' already exists and ist not created again!\n")
+        found_target_item = pmf.get_target_item(target, source_item, replace_urls)
+
+        if found_target_item:
+            logger.warning(f"Item with the titel '{found_target_item.title}' already exists (target ID: '{found_target_item.id}') and ist not created again!\n")
             continue                           
 
-        # create item mapping based on titel                                     
+        # create item mapping based on titel (and url)                                  
         item_mapping = {}
         # start key
         item_mapping_source_items = [source_item]
@@ -159,7 +160,7 @@ if __name__ == "__main__":
         while item_mapping_source_items:
             # item mapping for a list of source items (current recursion level)
             try:
-                item_mapping_level = pmf.get_item_mapping(source, target, item_mapping_source_items, source_target_itemId_map)
+                item_mapping_level = pmf.get_item_mapping(source, target, item_mapping_source_items, source_target_itemId_map, replace_urls)
             except Exception:
                     e = sys.exc_info()[1]
                     logger.error(f'Creating item mapping failed: {e.args[0]}')
@@ -207,8 +208,7 @@ if __name__ == "__main__":
         # get owner form source portal
         owner = source_item.owner
         # if item is hosted, parameters for the clone_items function have to be adjusted
-        hosted = pmf.is_hosted(source_item)
-        if hosted:
+        if pmf.is_hosted(source_item):
             logger.info("Service ist gehosted")
             copy_data = True 
             copy_global_ids = True

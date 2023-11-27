@@ -1,0 +1,8 @@
+{
+	"portal_url": "https://xxx/portal",	
+	"sign_in_user": "xxx",
+	"replace_urls" : {
+		"https://xxx/arcgis/admin/":"https://xxx/server/rest/",
+		"https://xxx/arcgis/admin/":"https://xxx/server/rest/"
+	}
+}

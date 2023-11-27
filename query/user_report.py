@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-# Name: 0_clone_users
+# Name: user_report.py
 #
-# Purpose: Script to clone users from one ArcGIS Portal to another.
+# Purpose: Script to list all items of a user.
 #
 # Author: Timo Wicki
 #
@@ -185,8 +185,8 @@ if __name__ == "__main__":
 
     ## end logging
     end_time = time.time()
-    i_warning = search(report_file, "warning")
-    i_error = search(report_file, "error")
+    i_warning = search(log_file, "warning")
+    i_error = search(log_file, "error")
     logger.info("Run Script in " + str(round(end_time - start_time)) + " sec.")
     logger.info(f'# {i_error} errors found')
     logger.info(f'# {i_warning} warnings found')

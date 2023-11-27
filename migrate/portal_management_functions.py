@@ -49,6 +49,52 @@ def is_hosted(item):
         return False
 
 
+def get_target_item(target, source_item, replace_urls = None):
+    """Get the corresponding target item of the source item
+
+    Required:
+        target  -- GIS object (target ArcGIS Portal)
+        source_item  -- ArcGIS Portal (source) item object
+        replace_urls -- Dictionary with difference between source and target url
+    
+    Return:
+        found_item -- Found ArcGIS Portal (target) item object or None (if not found)
+    """ 
+    # search for item in target portal 
+    target_items_search = target.content.search(query=f"title: {source_item.title}", item_type=source_item.type)
+    found_item = None
+    # check if exact match
+    for target_item in target_items_search:
+        if not found_item:
+            # check if exactly the same title
+            if target_item.title == source_item.title:
+                try:
+                    # item's are only the same if url's are also the same
+                    if replace_urls:
+                        # check entire url
+                        expected_target_url = source_item.url
+                        for replace_url in replace_urls:
+                            expected_target_url = expected_target_url.replace(replace_url, replace_urls[replace_url])                    
+                        if  target_item.url == expected_target_url:
+                            found_item = target_item
+                        else:
+                            print(f"Found Item '{target_item.title}' does not have the same url (source: {source_item.url}, target:{target_item.url})")    
+                    else: 
+                        # check only url part after '/rest/'
+                        if  target_item.url.split(r"/rest/")[1] == source_item.url.split(r"/rest/")[1]:
+                            found_item = target_item
+                        else:
+                            print(f"Found Item '{target_item.title}' does not have the same url (source: {source_item.url}, target:{target_item.url})")    
+
+                except:
+                    # if item's don't have the same rest url assume they are the same
+                    found_item = target_item
+            else:
+                print(f"Found Item '{target_item.title}' does not exactly match..") 
+
+    return found_item
+
+
 def copy_user(target, source_user):
     """Create user in the target Portal
 
@@ -146,7 +192,7 @@ def copy_group(target, source_group, group_copy_properties=None):
             raise
             
 
-def get_item_mapping(source, target, source_items, source_target_itemId_map = {}):
+def get_item_mapping(source, target, source_items, source_target_itemId_map = {}, replace_urls = None):
     """Search for all dependent items and create an item mapping between source and target IDs.
 
     Required:
@@ -159,6 +205,7 @@ def get_item_mapping(source, target, source_items, source_target_itemId_map = {}
     """  
     item_mapping = {}
     for source_item in source_items:
+        # dependent items
         fd_items = source_item.dependent_upon()
         if fd_items['total'] > 0:
             for fd_item in fd_items['list']:
@@ -168,18 +215,13 @@ def get_item_mapping(source, target, source_items, source_target_itemId_map = {}
                     if source_fd_item.id in source_target_itemId_map.keys():
                         item_mapping[source_fd_item.id] = source_target_itemId_map[source_fd_item.id]
                     else:
-                        # nach item in target suchen 
-                        target_fd_items_search = target.content.search(query=f"title: {source_fd_item.title}", item_type=source_fd_item.type)
-                        if target_fd_items_search:
-                            # prüfen ob exakte Übereinstimmung
-                            for target_fd_item in target_fd_items_search:
-                                if target_fd_item.title == source_fd_item.title:
-                                    print(f"Found Item '{target_fd_item.title}' in target Portal")
-                                    # item mapping erweitern
-                                    item_mapping[source_fd_item.id] = target_fd_item.id
-                                else:
-                                    print(f"Found Item '{target_fd_item.title}' does not exactly match..") 
+                        # check if item is hosted
+                        found_target_item = get_target_item(target, source_fd_item, replace_urls)
 
+                        if found_target_item:
+                            print(f"Found Item '{found_target_item.title}' in target Portal")
+                            # item mapping erweitern
+                            item_mapping[source_fd_item.id] = found_target_item.id
                         else:
                             print(f"Item '{source_fd_item.title} could not be found in the target Portal!")
                             raise ValueError(f"Item '{source_fd_item.title} could not be found in the target Portal!")
