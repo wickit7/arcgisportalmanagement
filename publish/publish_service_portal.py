@@ -68,7 +68,9 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-     
+    paramFiles = [r"K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\SLU\Betrieb Stadtplan\tba_strasse\publish_velonetz_test.json"]
+    #paramFiles = [r"K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\SLU\Betrieb Stadtplan\gis_citymaps\publish_spital_test.json"]
+
     # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
 
@@ -128,6 +130,16 @@ if __name__ == "__main__":
                     enable_extensions = data["enable_extensions"]
                 else:
                     enable_extensions = None
+                if "map_service_web_capabilities" in data:
+                    map_service_web_capabilities = data["map_service_web_capabilities"]
+                else:
+                    map_service_web_capabilities = "Map,Query,Data" # default
+                if "feature_service_web_capabilities" in data:
+                    feature_service_web_capabilities = data["feature_service_web_capabilities"]
+                else:
+                    feature_service_web_capabilities = "Query,Create,Update,Delete,Uploads,Editing" # default
+
+
                 enable_feature_access = False #default #depreciated parameter, use parameter "enable_extensions"!
                 if "enable_feature_access" in data:
                     if data["enable_feature_access"] == "True":
@@ -368,6 +380,39 @@ if __name__ == "__main__":
                         # enable extension
                         if extElement.tagName == 'Enabled':
                             extElement.firstChild.data = 'true'
+
+
+        # set map service capabilites 
+        if map_service_web_capabilities != "Map,Query,Data": # if not default setting
+            configProps  = doc.getElementsByTagName('Info')[0]
+            propArray = configProps.firstChild
+            propSets = propArray.childNodes
+            for propSet in propSets:
+                keyValues = propSet.childNodes
+                for keyValue in keyValues:
+                    if keyValue.tagName == 'Key':
+                        if keyValue.firstChild.data == "WebCapabilities":
+                            # Defaults are Map,Query,Data
+                            keyValue.nextSibling.firstChild.data = map_service_web_capabilities
+
+        # Set feature service properties
+        if "FeatureServer" in enable_extensions:
+            if feature_service_web_capabilities != "Query,Create,Update,Delete,Uploads,Editing": # if not default setting
+                typeNames = doc.getElementsByTagName('TypeName')
+                for typeName in typeNames:
+                    # Get the TypeName to enable
+                    if typeName.firstChild.data == "FeatureServer":
+                        extension = typeName.parentNode
+                        for extElement in extension.childNodes:
+                            if extElement.tagName == 'Info':
+                                for propSet in extElement.childNodes:
+                                    for prop in propSet.childNodes:
+                                        for prop1 in prop.childNodes:
+                                            if prop1.tagName == "Key":
+                                                if prop1.firstChild.data == 'WebCapabilities':
+                                                    # Defaults are Query,Create,Update,Delete,Uploads,Editing
+                                                    prop1.nextSibling.firstChild.data = feature_service_web_capabilities
+
 
         ## set sharing options in sddraft
         if share:
