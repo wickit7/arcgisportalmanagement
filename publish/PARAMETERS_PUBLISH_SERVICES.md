@@ -19,6 +19,8 @@
 | portal_folder | Folder on the portal interface (in "my content") in which the service is published| "TEST" |
 | service_type | "FEATURE", "TILE" or "MAP_IMAGE" (default).| "MAP_IMAGE" |
 | service_documents | Path in which the SD files will be stored.| "C:/Temp/tutorial" |
+| map_service_web_capabilities | Map Service Web Capabilites |  "Map,Query,Data" (default) |
+| feature_service_web_capabilities | Feature Service Web Capabilites |   "Query,Create,Update,Delete,Uploads,Editing" (default) |
 | log_folder | Path to the folder where the log file should be saved (default = "path service_documents"/Logs).| "C:/Temp/Logs" |
 | enable_extensions | A list of extenstions that should be enabled. Possible entries are: FeatureServer, WMSServer, WFSServer, NetworkDiagramServer, TopographicProductionServer, TraceNetworkServer, ValidationServer, WCSServer, LRServer, ParcelFabricServer, VersionManagementServer, KmlServer, UtilityNetworkServer. The extenstions are generally enabled in the sddraft file. However, OGC Services (WMSServer, WFSServer, WCSSercer) are enabled after publishing the service because of an esri BUG and therfore the corresponding portal item will get a new item id if the service already existed. (optional)| ["FeatureServer" ,"WMSServer", "WFSServer"] |
 | check_unique_ID_assignment | A Boolean that indicates whether your map is analyzed to confirm that the Allow assignment of unique numeric IDs for sharing web layers option in Map Properties is enabled (optional). | "True" (default)|

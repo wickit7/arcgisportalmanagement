@@ -9,6 +9,8 @@
 "service_name": "Playground",
 "service_type": "MAP_IMAGE",
 "enable_extensions": ["FeatureServer"],
+"map_service_web_capabilities": "Map,Query,Data",
+"feature_service_web_capabilities": "Query,Uploads",
 "check_unique_ID_assignment": "True",
 "copy_data_to_server": "False",
 "overwrite_existing_service": "True",

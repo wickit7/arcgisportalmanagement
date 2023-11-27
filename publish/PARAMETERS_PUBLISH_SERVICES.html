@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>JSON file input parameters for publishing services to ArcGIS Portal</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        <style>
+
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="json-file-input-parameters-for-publishing-services-to-arcgis-portal">JSON file input parameters for publishing services to ArcGIS Portal</h1>
+<ul>
+<li>A description of the paramters for the script <a href="publish_service_portal.py">publish_service_portal.py</a>.</li>
+<li>Example JSON files are found in the <a href="tutorial">tutorial</a> folder.</li>
+<li>A general description of the script is found in the <a href="../README.html">README.md</a> file.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Parameter Name</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stage</td>
+<td>Used for naming the SD files (postfix) that will be created. It also specifies the server type (if &quot;ONLINE&quot; → server_type = &quot;MY_HOSTED_SERVICES&quot;.  Otherwise server_type = &quot;FEDERATED_SERVER&quot;).</td>
+<td>&quot;TEST&quot; or &quot;PROD&quot;</td>
+</tr>
+<tr>
+<td>portal_url</td>
+<td>Path to the ArcGIS Portal on which the service is to be published.</td>
+<td>&quot;<a href="https://xxx.xxx.com/portal">https://xxx.xxx.com/portal</a>&quot;</td>
+</tr>
+<tr>
+<td>federated_server_url</td>
+<td>Path to the ArcGIS Portal Server on which the service is to be published.</td>
+<td>&quot;<a href="https://xxx.xxx.com/server">https://xxx.xxx.com/server</a>&quot;</td>
+</tr>
+<tr>
+<td>sign_in_user</td>
+<td>User with whom the portal is to be logged in → becomes owner of the published content. Alternatively, use the parameters &quot;cert_file&quot; and &quot;key_file&quot; to log in.</td>
+<td>&quot;username@domain&quot;</td>
+</tr>
+<tr>
+<td>aprx</td>
+<td>Path to the ArcGIS Pro project with the maps/layers to be published.</td>
+<td>&quot;C:/Temp/tutorial/tutorial.aprx&quot;</td>
+</tr>
+<tr>
+<td>map</td>
+<td>Name of the map in the ArcGIS Pro project with the data to be published.</td>
+<td>&quot;citymaps_editor&quot;</td>
+</tr>
+<tr>
+<td>layer</td>
+<td>Name of the layer to be published. If no layer (or table) is specified, the entire map is published (optional).</td>
+<td>&quot;Playground&quot;</td>
+</tr>
+<tr>
+<td>table</td>
+<td>Name of the table to be published. If no table (or layer) is specified, the entire map is published (optional).</td>
+<td>&quot;Items&quot;</td>
+</tr>
+<tr>
+<td>service_name</td>
+<td>Name of the service that will be created.</td>
+<td>&quot;Playground&quot;</td>
+</tr>
+<tr>
+<td>server_folder</td>
+<td>Folder on the server in which the service is published</td>
+<td>&quot;TEST&quot;</td>
+</tr>
+<tr>
+<td>portal_folder</td>
+<td>Folder on the portal interface (in &quot;my content&quot;) in which the service is published</td>
+<td>&quot;TEST&quot;</td>
+</tr>
+<tr>
+<td>service_type</td>
+<td>&quot;FEATURE&quot;, &quot;TILE&quot; or &quot;MAP_IMAGE&quot; (default).</td>
+<td>&quot;MAP_IMAGE&quot;</td>
+</tr>
+<tr>
+<td>service_documents</td>
+<td>Path in which the SD files will be stored.</td>
+<td>&quot;C:/Temp/tutorial&quot;</td>
+</tr>
+<tr>
+<td>map_service_web_capabilities</td>
+<td>Map Service Web Capabilites</td>
+<td>&quot;Map,Query,Data&quot; (default)</td>
+</tr>
+<tr>
+<td>feature_service_web_capabilities</td>
+<td>Feature Service Web Capabilites</td>
+<td>&quot;Query,Create,Update,Delete,Uploads,Editing&quot; (default)</td>
+</tr>
+<tr>
+<td>log_folder</td>
+<td>Path to the folder where the log file should be saved (default = &quot;path service_documents&quot;/Logs).</td>
+<td>&quot;C:/Temp/Logs&quot;</td>
+</tr>
+<tr>
+<td>enable_extensions</td>
+<td>A list of extenstions that should be enabled. Possible entries are: FeatureServer, WMSServer, WFSServer, NetworkDiagramServer, TopographicProductionServer, TraceNetworkServer, ValidationServer, WCSServer, LRServer, ParcelFabricServer, VersionManagementServer, KmlServer, UtilityNetworkServer. The extenstions are generally enabled in the sddraft file. However, OGC Services (WMSServer, WFSServer, WCSSercer) are enabled after publishing the service because of an esri BUG and therfore the corresponding portal item will get a new item id if the service already existed. (optional)</td>
+<td>[&quot;FeatureServer&quot; ,&quot;WMSServer&quot;, &quot;WFSServer&quot;]</td>
+</tr>
+<tr>
+<td>check_unique_ID_assignment</td>
+<td>A Boolean that indicates whether your map is analyzed to confirm that the Allow assignment of unique numeric IDs for sharing web layers option in Map Properties is enabled (optional).</td>
+<td>&quot;True&quot; (default)</td>
+</tr>
+<tr>
+<td>copy_data_to_server</td>
+<td>If &quot;True&quot; the data will be published into the ArcGIS Portal Datastore. If &quot;False&quot; (defaut) the service will reference to the registered database.</td>
+<td>&quot;False&quot;</td>
+</tr>
+<tr>
+<td>overwrite_existing_service</td>
+<td>If &quot;True&quot; (default), an existing service is overwritten. If &quot;False&quot;, an existing service will not be overwritten.</td>
+<td>&quot;True&quot;</td>
+</tr>
+<tr>
+<td>in_startupType</td>
+<td>If &quot;STARTED&quot; (default) service will be started after publishing. If &quot;STOPPED&quot; service will not start automatically. → see ArcGIS documentation &quot;arcpy.server.UploadServiceDefinition&quot;.</td>
+<td>&quot;STARTED&quot;</td>
+</tr>
+<tr>
+<td>share</td>
+<td>A dictionary with release settings (optional) → see ArcGIS documentation &quot;arcpy.server.UploadServiceDefinition&quot;.</td>
+<td>&quot;{...}&quot;</td>
+</tr>
+<tr>
+<td>share/in_override</td>
+<td>&quot;OVERRIDE_DEFINITION&quot; (default) or &quot;USE_DEFINITION&quot;.</td>
+<td>&quot;OVERRIDE_DEFINITION&quot;</td>
+</tr>
+<tr>
+<td>share/in_my_contents</td>
+<td>&quot;SHARE_ONLINE&quot; (default) or &quot;NO_SHARE_ONLINE&quot;.</td>
+<td>&quot;SHARE_ONLINE&quot;</td>
+</tr>
+<tr>
+<td>share/in_public</td>
+<td>&quot;PUBLIC&quot; or &quot;PRIVATE&quot; (default).</td>
+<td>&quot;PRIVATE&quot;</td>
+</tr>
+<tr>
+<td>share/in_organization</td>
+<td>&quot;SHARE_ORGANIZATION&quot; or &quot;NO_SHARE_ORGANIZATION&quot; (default).</td>
+<td>&quot;NO_SHARE_ORGANIZATION&quot;</td>
+</tr>
+<tr>
+<td>share/in_groups</td>
+<td>List of names of groups with which the service is to be shared (optional).</td>
+<td>[&quot;testgroup_1&quot;, &quot;testgroup_2&quot;]</td>
+</tr>
+<tr>
+<td>metadata</td>
+<td>A dictionary with metadata settings (optional) → see ArcGIS documentation &quot;sddraft parameters&quot;.</td>
+<td>&quot;{...}&quot;</td>
+</tr>
+<tr>
+<td>metadata/credits</td>
+<td>A string with credit informations.</td>
+<td>&quot;© Geoinformationszentrum Stadt Luzern&quot;</td>
+</tr>
+<tr>
+<td>metadata/description</td>
+<td>A description of the service.</td>
+<td>&quot;playground places&quot;</td>
+</tr>
+<tr>
+<td>metadata/summary</td>
+<td>A summary of the service.</td>
+<td>&quot;playground places&quot;</td>
+</tr>
+<tr>
+<td>metadata/tags</td>
+<td>A string of tags separated by commas.</td>
+<td>&quot;test,playground&quot;</td>
+</tr>
+<tr>
+<td>metadata/use_limitations</td>
+<td>A string wit infrmations about use limitation.</td>
+<td>&quot;test,playground&quot;</td>
+</tr>
+<tr>
+<td>enable_cache</td>
+<td>If a cache scheme is to be created for the service (optional) → see arcpy.server.CreateMapServerCache()</td>
+<td>&quot;{...}&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/service_cache_directory</td>
+<td>Path to &quot;arcgiscache&quot; Directory on the server e.g. &quot;D:/arcgisserver/directories/arcgiscache&quot; (default).</td>
+<td>&quot;D:/arcgisserver/directories/arcgiscache&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/tiling_scheme_type</td>
+<td>&quot;NEW&quot; (default) or &quot;PREDEFINED&quot; (if predefined tiling scheme file XML is used).</td>
+<td>&quot;NEW&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/scales_type</td>
+<td>&quot;STANDARD&quot; (default) or &quot;CUSTOM&quot;.</td>
+<td>&quot;STANDARD&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/num_of_scales</td>
+<td>Number of scales.</td>
+<td>&quot;10&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/dots_per_inch</td>
+<td>Dots per inch.</td>
+<td>&quot;96&quot; (default)</td>
+</tr>
+<tr>
+<td>enable_cache/tile_size</td>
+<td>Tile size.</td>
+<td>&quot;256 x 256&quot; (default)</td>
+</tr>
+<tr>
+<td>enable_cache/predefined_tiling_scheme</td>
+<td>Path to tiling scheme XML file (optional).</td>
+<td>&quot;C:/Temp/tutorial/tiling schema/Tilingschema_slu.xml&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/tile_origin</td>
+<td>Origin of the tiles.</td>
+<td>&quot;-27386400 31814500&quot; (optional)</td>
+</tr>
+<tr>
+<td>enable_cache/scales</td>
+<td>Scales separated by semicolons. (optional)</td>
+<td>&quot;25000;10000;5000;2000;1000;500;200&quot;</td>
+</tr>
+<tr>
+<td>enable_cache/cache_tile_format</td>
+<td>Cache tile format.</td>
+<td>&quot;PNG&quot; (default)</td>
+</tr>
+<tr>
+<td>enable_cache/tile_compression_quality</td>
+<td>Tile compression quality.</td>
+<td>&quot;0&quot; (default)</td>
+</tr>
+<tr>
+<td>enable_cache/storage_format</td>
+<td>&quot;COMPACT&quot; (default) or &quot;EXPLODED&quot;.</td>
+<td>&quot;COMPACT&quot;</td>
+</tr>
+<tr>
+<td>manage_cache</td>
+<td>If cache tiles are to be created (optional) → see arcpy.server.ManageMapServerCacheTiles()</td>
+<td>&quot;{...}&quot;</td>
+</tr>
+<tr>
+<td>manage_cache/scales</td>
+<td>Usually the same as for the paramter &quot;scales&quot; in the section &quot;enable_cache&quot; (default)</td>
+<td>&quot;25000;10000&quot;</td>
+</tr>
+<tr>
+<td>manage_cache/update_mode</td>
+<td>&quot;RECREATE_EMPTY_TILES&quot;, &quot;RECREATE_ALL_TILES&quot; (default) or &quot;DELETE_TILES&quot;.</td>
+<td>&quot;RECREATE_ALL_TILES&quot;</td>
+</tr>
+<tr>
+<td>manage_cache/num_of_caching_service_instances</td>
+<td>Number of instances used to calculate the cache tiles (optional).</td>
+<td>&quot;3&quot;</td>
+</tr>
+<tr>
+<td>manage_cache/update_extent</td>
+<td>Rectancular extend for which the cache should be calculated (optional).</td>
+<td>&quot;2663236.84315087 1209883.76599764 2667648.37450472 1212477.32630589&quot;</td>
+</tr>
+<tr>
+<td>manage_cache/wait_for_job_completion</td>
+<td>&quot;WAIT&quot; (default) or &quot;DO_NOT_WAIT&quot;.</td>
+<td>&quot;WAIT&quot;</td>
+</tr>
+</tbody>
+</table>
+
+        
+        
+    </body>
+    </html>
