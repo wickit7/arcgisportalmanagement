@@ -68,9 +68,8 @@ def create_folder(folder_path) -> None:
 
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
-    #paramFile = arcpy.GetParameterAsText(0)
+    paramFile = arcpy.GetParameterAsText(0)
     #paramFile = r'C:\Temp\tutorial\3_clone_items.json'
-    paramFile = r'\\gisfileprod\GIS\GIS_ADMIN\CITYMAPS_MASTER\Migrate\Portal\SLU\Betrieb Stadtplan\3_clone_items_tranche1.json'
 
     if paramFile:        
         with open(paramFile, encoding='utf-8') as f:
@@ -251,7 +250,7 @@ if __name__ == "__main__":
             if target_item.title == source_item.title and target_item.type == source_item.type:
                 source_target_itemId_map[source_item.id] = target_item.id
             else:
-                source_items_search = source.content.search(query=f"title: {target_item.title}", item_type=target_item.type)
+                source_items_search = source.content.search(query=f'title: "{target_item.title}"', item_type=target_item.type)
                 if source_items_search:
                     # check if wheter there is an exact match 
                     for source_item_s in source_items_search:

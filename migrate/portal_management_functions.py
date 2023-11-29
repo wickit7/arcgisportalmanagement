@@ -61,7 +61,7 @@ def get_target_item(target, source_item, replace_urls = None):
         found_item -- Found ArcGIS Portal (target) item object or None (if not found)
     """ 
     # search for item in target portal 
-    target_items_search = target.content.search(query=f"title: {source_item.title}", item_type=source_item.type)
+    target_items_search = target.content.search(query=f'title: "{source_item.title}"', item_type=source_item.type)
     found_item = None
     # check if exact match
     for target_item in target_items_search:
@@ -75,7 +75,7 @@ def get_target_item(target, source_item, replace_urls = None):
                         expected_target_url = source_item.url
                         for replace_url in replace_urls:
                             expected_target_url = expected_target_url.replace(replace_url, replace_urls[replace_url])                    
-                        if  target_item.url == expected_target_url:
+                        if  (target_item.url == expected_target_url) or (target_item.url is None and expected_target_url == '') or (target_item.url == '' and expected_target_url is None):
                             found_item = target_item
                         else:
                             print(f"Found Item '{target_item.title}' does not have the same url (source: {source_item.url}, target:{target_item.url})")    
