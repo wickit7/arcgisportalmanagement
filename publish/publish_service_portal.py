@@ -395,22 +395,23 @@ if __name__ == "__main__":
                             keyValue.nextSibling.firstChild.data = map_service_web_capabilities
 
         # Set feature service properties
-        if "FeatureServer" in enable_extensions:
-            if feature_service_web_capabilities != "Query,Create,Update,Delete,Uploads,Editing": # if not default setting
-                typeNames = doc.getElementsByTagName('TypeName')
-                for typeName in typeNames:
-                    # Get the TypeName to enable
-                    if typeName.firstChild.data == "FeatureServer":
-                        extension = typeName.parentNode
-                        for extElement in extension.childNodes:
-                            if extElement.tagName == 'Info':
-                                for propSet in extElement.childNodes:
-                                    for prop in propSet.childNodes:
-                                        for prop1 in prop.childNodes:
-                                            if prop1.tagName == "Key":
-                                                if prop1.firstChild.data == 'WebCapabilities':
-                                                    # Defaults are Query,Create,Update,Delete,Uploads,Editing
-                                                    prop1.nextSibling.firstChild.data = feature_service_web_capabilities
+        if enable_extensions:
+            if "FeatureServer" in enable_extensions:
+                if feature_service_web_capabilities != "Query,Create,Update,Delete,Uploads,Editing": # if not default setting
+                    typeNames = doc.getElementsByTagName('TypeName')
+                    for typeName in typeNames:
+                        # Get the TypeName to enable
+                        if typeName.firstChild.data == "FeatureServer":
+                            extension = typeName.parentNode
+                            for extElement in extension.childNodes:
+                                if extElement.tagName == 'Info':
+                                    for propSet in extElement.childNodes:
+                                        for prop in propSet.childNodes:
+                                            for prop1 in prop.childNodes:
+                                                if prop1.tagName == "Key":
+                                                    if prop1.firstChild.data == 'WebCapabilities':
+                                                        # Defaults are Query,Create,Update,Delete,Uploads,Editing
+                                                        prop1.nextSibling.firstChild.data = feature_service_web_capabilities
 
 
         ## set sharing options in sddraft
