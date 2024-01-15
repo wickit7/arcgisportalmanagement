@@ -9,7 +9,7 @@
 # Created: 20.03.2023
 # -----------------------------------------------------------------------------
 import tempfile
-
+from getpass import getpass
 from arcgis.gis import GIS
 
 ## globale variables
@@ -95,7 +95,7 @@ def get_target_item(target, source_item, replace_urls = None):
     return found_item
 
 
-def copy_user(target, source_user):
+def copy_user(target, source_user, password = None, logger = None):
     """Create user in the target Portal
 
     Required:
@@ -107,39 +107,65 @@ def copy_user(target, source_user):
     """ 
     # create temporary directory for thumbnail 
     with tempfile.TemporaryDirectory() as temp_dir:
-        # first- und lastname of the source user
         try:
-            first_name = source_user.firstName
-            last_name = source_user.lastName
-        except:
-            full_name = source_user.fullName
-            first_name = full_name.split()[0]
-            try:
-                last_name = full_name.split()[1]
-            except:
-                last_name = 'None'
-        try:    
             # download thumbnail from source Protal
+            thumbnail_file = None
             if 'thumbnail' in source_user:
                 thumbnail_file = source_user.download_thumbnail(temp_dir)
-            # create user 
-            copied_user = target.users.create(username=source_user.username, password='None', 
-                            firstname=first_name, lastname=last_name, email=source_user.email, 
-                            description=source_user.description, provider="enterprise", 
-                            idp_username=source_user.idpUsername, level=int(source_user.level))
-            # update user infos
-            copied_user.update(access=source_user.access, preferred_view=source_user.preferredView, 
-                                tags=source_user.tags, thumbnail = thumbnail_file, fullname=source_user.fullName, 
-                                culture=source_user.culture, region=source_user.region)
+            # create user
+            if source_user.provider == 'arcgis':
+                password = getpass(f'Enter password for arcgis build in user "{source_user.fullName}": ')
+            copied_user = target.users.create(username=source_user.username, password=password, 
+                            firstname=source_user.firstName, lastname=source_user.lastName, 
+                            email=source_user.email, provider=source_user.provider, idp_username=source_user.idpUsername, 
+                            description=source_user.description, level=int(source_user.level))
+            
             # update user role
-            copied_user.update_role(source_user.roleId)
+            if copied_user.roleId != source_user.roleId:
+                copied_user.update_role(source_user.roleId)
+
+            # update user infos if necessary
+            if copied_user.access != source_user.access:
+                copied_user.update(access=source_user.access)
+            if copied_user.preferredView != source_user.preferredView:
+                copied_user.update(preferred_view=source_user.preferredView)
+            if copied_user.tags != source_user.tags:
+                copied_user.update(tags=source_user.tags)
+            if copied_user.fullName != source_user.fullName:
+                copied_user.update(fullname=source_user.fullName)
+            if copied_user.culture != source_user.culture:
+                copied_user.update(culture=source_user.culture, culture_format=source_user.cultureFormat)
+            if copied_user.region != source_user.region:
+                copied_user.update(region=source_user.region)       
+            if thumbnail_file:
+                copied_user.update(thumbnail=thumbnail_file)
+
+            # add user to groups
+            for source_group in source_user.groups:
+                target_group_search = target.groups.search(source_group.title)
+                if target_group_search:
+                    # check if match exactly
+                    for target_group in target_group_search:    
+                        if target_group.title == source_group.title:
+                            if logger:
+                                logger.info(f"Add user to group '{target_group.title}'")
+                            else:
+                                print(f"Add user to group '{target_group.title}'")
+                            target_group.add_users([copied_user.username])
+                        else:
+                            print(f"Group '{target_group.title}' does not exactly match..")
+                else:
+                    if logger:
+                        logger.warning("Group '{source_group.title}' was not found in the target portal!")
+                    else:
+                        print(f"Group '{source_group.title}' was not found in the target portal!")
 
             return copied_user
 
         except Exception as e:
             print(f"User {source_user.username} kann nicht korrekt erstellt werden:")  
             print(f"{type(e)}: {str(e)}") 
-            raise 
+            raise e
 
 
 def copy_group(target, source_group, group_copy_properties=None):

@@ -70,7 +70,7 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFile = arcpy.GetParameterAsText(0)
-    #paramFile = r'C:\Temp\tutorial\0_clone_users.json'
+    #paramFile = r'...\0_clone_users.json'
 
     if paramFile:        
         with open(paramFile, encoding='utf-8') as f:
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         else:
             try:
                 logger.info(f"Create user '{user.username}'")
-                target_user = pmf.copy_user(target, user)
+                target_user = pmf.copy_user(target, user, logger = logger)
                 if target_user:
                     logger.info(f"Created user '{target_user.username}' in target portal")
                     #display(target_user)
@@ -152,7 +152,7 @@ if __name__ == "__main__":
                     logger.error(f'Creating user failed!') 
             except Exception:
                 e = sys.exc_info()[1]
-                logger.error(f'Creating user failed: {e.args[0]}')   
+                logger.error(f'Creating user failed: {e.args[0]}')
 
     ## end logging
     end_time = time.time()
