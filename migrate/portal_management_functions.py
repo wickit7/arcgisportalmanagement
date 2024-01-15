@@ -156,7 +156,7 @@ def copy_user(target, source_user, password = None, logger = None):
                             print(f"Group '{target_group.title}' does not exactly match..")
                 else:
                     if logger:
-                        logger.warning("Group '{source_group.title}' was not found in the target portal!")
+                        logger.warning(f"Group '{source_group.title}' was not found in the target portal!")
                     else:
                         print(f"Group '{source_group.title}' was not found in the target portal!")
 
