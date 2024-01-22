@@ -212,6 +212,11 @@ if __name__ == "__main__":
                     enable_cache.setdefault("tile_size",  "256 x 256") #default    
                     enable_cache.setdefault("cache_tile_format", "PNG") #default    
                     enable_cache.setdefault("storage_format", "COMPACT") #default          
+                    scale_values = [int(scale) for scale in enable_cache['scales'].split(';')]
+                    max_scale = scale_values[0]
+                    min_scale = scale_values[-1]
+                    max_lod = len(scale_values) - 1
+                    min_lod = 0
                 else:
                     enable_cache = None
                 if "manage_cache" in data:
@@ -231,7 +236,7 @@ if __name__ == "__main__":
         else:
             filename = f'{service_name}_{stage.lower()}'
 
-        # path to the log file
+        # path to the log file00
         log_file = os.path.join(log_folder, f'{filename}.log')
         # logfile should be unique
         while log_file in log_files:
@@ -461,6 +466,7 @@ if __name__ == "__main__":
         # each key has a corresponding value
         for ii, key in enumerate(keys):
             if key.hasChildNodes():
+                #print(f"key: '{key.firstChild.nodeValue}'")
                 if key.firstChild.nodeValue == "PackageUnderMyOrg":
                     if share_to_organisation:
                         logger.info(f'Share to organisation: "{share_to_organisation}"')
@@ -480,10 +486,12 @@ if __name__ == "__main__":
                 if key.firstChild.data == 'antialiasingMode': 
                     if antialiasing_mode:
                         key.nextSibling.firstChild.data = antialiasing_mode 
-                if key.firstChild.data == 'textAntialiasingMode':
-                    if text_antialiasing_mode:
-                        key.nextSibling.firstChild.data = text_antialiasing_mode
-
+                if key.firstChild.data == 'maxScale':
+                    if enable_cache:
+                        key.nextSibling.firstChild.data = max_scale
+                if key.firstChild.data == 'minScale':
+                    if enable_cache:
+                        key.nextSibling.firstChild.data = min_scale
         # write result into a new file
         if enable_extensions or share:
             logger.info("Create new sddraft file")
