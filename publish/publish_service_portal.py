@@ -68,9 +68,9 @@ def create_folder(folder_path) -> None:
 if __name__ == "__main__":
     # path to a JSON input file or multiple JSON files
     paramFiles = sys.argv[1:]
-    #paramFiles = [r"I:\515 GIS\0 TätigLeist\3 GM\3 BewirtschaftungGBD\8303L1005 3D-Stadtmodell\Grundlagen_Spezialobjekte\Turnhalle Maihof\Import\4 ArcGIS Pro Projekt 20240110\publish_Turnhalle_Maihof_test.json"]
+    #paramFiles = [r"K:\GIS_ADMIN\CITYMAPS_MASTER\Publish\Portal\tutorial\publish_citymaps_cache_predefined_test.json"]
 
-    # path to the overall log file if there is more than one json input file (stored in the "Logs" folder in the directory of the Python script).
+    # path to the overall log file if there is more than one json input file (stored in the folder "Logs" in the directory of the Python script).
     overall_log_folder = os.path.join(os.path.dirname(__file__), "Logs")
 
     count = 0
@@ -83,7 +83,7 @@ if __name__ == "__main__":
             with open(paramFile, encoding='utf-8') as f:
                 data = json.load(f)
                 if 'environment' in data:
-                    # if depreciated parameter "environmentan" is used (old json)
+                    # if depreciated parameter "environment" is used (old json)
                     stage = data["environment"]
                 elif "stage" in data:
                     stage = data["stage"]
@@ -138,7 +138,6 @@ if __name__ == "__main__":
                 else:
                     feature_service_web_capabilities = "Query,Create,Update,Delete,Uploads,Editing" # default
 
-
                 enable_feature_access = False #default #depreciated parameter, use parameter "enable_extensions"!
                 if "enable_feature_access" in data:
                     if data["enable_feature_access"] == "True":
@@ -151,6 +150,14 @@ if __name__ == "__main__":
                 if "check_unique_ID_assignment" in data:
                     if data["check_unique_ID_assignment"] == "False":
                         check_unique_ID_assignment = False
+                if "antialiasing_mode" in data:
+                    antialiasing_mode = data["antialiasing_mode"] # set to "None" (default), "Fastest", "Fast", "Normal" or "Best"
+                else:
+                    antialiasing_mode =  None #default
+                if "text_antialiasing_mode" in data: 
+                    text_antialiasing_mode = data["text_antialiasing_mode"] # set to "None", "Normal",or "Force" (default)
+                else:
+                    text_antialiasing_mode =  None #default                
                 copy_data_to_server = False #default
                 if "copy_data_to_server" in data:
                     if data["copy_data_to_server"] == "True":
@@ -413,12 +420,10 @@ if __name__ == "__main__":
                                                         # Defaults are Query,Create,Update,Delete,Uploads,Editing
                                                         prop1.nextSibling.firstChild.data = feature_service_web_capabilities
 
-
-        ## set sharing options in sddraft
+        ## set service parameters
+        # get sharing options from input
         if share:
-            logger.info("Update sddraft file to set sharing options")
-            key_list = doc.getElementsByTagName('Key')
-            value_list = doc.getElementsByTagName('Value')
+            logger.info("Get sharing options from input")
             # change following to "true" to share
             if share['in_public'] == "PUBLIC" or share['in_public'] == "True":
                 share_to_everyone = "true"
@@ -442,20 +447,42 @@ if __name__ == "__main__":
                 group_ids_str = ",".join(group_ids)    
             else:
                 share_to_group = "false"
-            # each key has a corresponding value
-            for i in range(key_list.length):
-                if key_list[i].firstChild.nodeValue == "PackageUnderMyOrg":
-                    logger.info(f'Share to organisation: "{share_to_organisation}"')
-                    value_list[i].firstChild.nodeValue = share_to_organisation
-                if key_list[i].firstChild.nodeValue == "PackageIsPublic":
-                    logger.info(f'Share to public: "{share_to_everyone}"')
-                    value_list[i].firstChild.nodeValue = share_to_everyone
-                # if key_list[i].firstChild.nodeValue == "PackageShareGroups": # share items with group later with ArcGIS API for Python
-                #     logger.info(f'Share to group: "{share_to_group}"')
-                #     value_list[i].firstChild.nodeValue = share_to_group
-                # if share_to_group == "true" and key_list[i].firstChild.nodeValue == "PackageGroupIDs":
-                #     logger.info(f'Share to groups: "{group_ids_str}"')
-                #     value_list[i].firstChild.nodeValue = group_ids_str
+        else:
+            share_to_everyone = None
+            share_to_organisation = None
+            share_to_group = None
+            group_ids_str = None
+
+        ## update xml file
+        logger.info("Update sddraft file with service properties")
+        keys = doc.getElementsByTagName('Key')
+        values = doc.getElementsByTagName('Value')
+                                                        
+        # each key has a corresponding value
+        for ii, key in enumerate(keys):
+            if key.hasChildNodes():
+                if key.firstChild.nodeValue == "PackageUnderMyOrg":
+                    if share_to_organisation:
+                        logger.info(f'Share to organisation: "{share_to_organisation}"')
+                        values[ii].firstChild.nodeValue = share_to_organisation
+                if key.firstChild.nodeValue == "PackageIsPublic":
+                    if share_to_everyone:
+                        logger.info(f'Share to public: "{share_to_everyone}"')
+                        values[ii].firstChild.nodeValue = share_to_everyone
+                # if key.firstChild.nodeValue == "PackageShareGroups": # Bug? -> share items with group later with ArcGIS API for Python
+                #     if share_to_group:
+                #         logger.info(f'Share to group: "{share_to_group}"')
+                #         values[ii].firstChild.nodeValue = share_to_group
+                # if share_to_group == "true" and key.firstChild.nodeValue == "PackageGroupIDs":
+                #     if group_ids_str:
+                #         logger.info(f'Share to groups: "{group_ids_str}"')
+                #         values[ii].firstChild.nodeValue = group_ids_str
+                if key.firstChild.data == 'antialiasingMode': 
+                    if antialiasing_mode:
+                        key.nextSibling.firstChild.data = antialiasing_mode 
+                if key.firstChild.data == 'textAntialiasingMode':
+                    if text_antialiasing_mode:
+                        key.nextSibling.firstChild.data = text_antialiasing_mode
 
         # write result into a new file
         if enable_extensions or share:
@@ -565,7 +592,7 @@ if __name__ == "__main__":
                 # Retrieve the updated service information
                 service_data = service.properties
 
-        # create portal folder for the singed in user
+        # create portal folder for the singed in user if not alread exists (because of a Bug in arpy.sharing the item is not already in this folder)
         create_folder__flag = True
         for folder in target.users.me.folders:
             if portal_folder == folder['title']:
@@ -598,7 +625,7 @@ if __name__ == "__main__":
             # update item with metadata
             item.update(new_metadata)
 
-            # share item
+            # share item (already done with arcpy.sharing but do it here again because of a Bug in sharing with groups)
             if share["in_public"] == "PUBLIC":
                 share_everyone = True
             else:

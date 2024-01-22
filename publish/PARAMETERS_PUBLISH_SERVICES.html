@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>JSON file input parameters for publishing services to ArcGIS Portal</title>
-        <style>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>JSON file input parameters for publishing services to ArcGIS Portal</title>
+            <style>
 /* From extension vscode.github */
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +16,7 @@
 }
 
 </style>
-        
+            
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
 <style>
@@ -37,13 +37,109 @@
     pointer-events: none;
 }
 </style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
         <style>
 
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    </head>
-    <body class="vscode-body vscode-light">
-        <h1 id="json-file-input-parameters-for-publishing-services-to-arcgis-portal">JSON file input parameters for publishing services to ArcGIS Portal</h1>
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="json-file-input-parameters-for-publishing-services-to-arcgis-portal">JSON file input parameters for publishing services to ArcGIS Portal</h1>
 <ul>
 <li>A description of the paramters for the script <a href="publish_service_portal.py">publish_service_portal.py</a>.</li>
 <li>Example JSON files are found in the <a href="tutorial">tutorial</a> folder.</li>
@@ -147,6 +243,16 @@
 <td>check_unique_ID_assignment</td>
 <td>A Boolean that indicates whether your map is analyzed to confirm that the Allow assignment of unique numeric IDs for sharing web layers option in Map Properties is enabled (optional).</td>
 <td>&quot;True&quot; (default)</td>
+</tr>
+<tr>
+<td>antialiasing_mode</td>
+<td>Set the antialisingMode of the service: &quot;None&quot;, &quot;Fastest&quot;, &quot;Fast&quot;, &quot;Normal&quot; or &quot;Best&quot;</td>
+<td>&quot;None&quot; (default)</td>
+</tr>
+<tr>
+<td>text_antialiasing_mode</td>
+<td>Set the textAntialisingMode of the service: &quot;None&quot;, &quot;Normal&quot;,or &quot;Force&quot;</td>
+<td>&quot;Force&quot; (default)</td>
 </tr>
 <tr>
 <td>copy_data_to_server</td>
@@ -321,7 +427,7 @@
 </tbody>
 </table>
 
-        
-        
-    </body>
-    </html>
+            
+            
+        </body>
+        </html>
