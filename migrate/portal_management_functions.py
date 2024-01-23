@@ -241,7 +241,7 @@ def get_item_mapping(source, target, source_items, source_target_itemId_map = {}
                     if source_fd_item.id in source_target_itemId_map.keys():
                         item_mapping[source_fd_item.id] = source_target_itemId_map[source_fd_item.id]
                     else:
-                        # check if item is hosted
+                        # get target item
                         found_target_item = get_target_item(target, source_fd_item, replace_urls)
 
                         if found_target_item:

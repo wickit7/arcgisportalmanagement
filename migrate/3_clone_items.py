@@ -277,7 +277,7 @@ if __name__ == "__main__":
             #                        fd_item.update({"url":fd_item['url'].replace(key, replace_urls[key])}) # ******* target_item is not updated !??
                                     
                                 
-        # Get group membership from source Portal -> alternatively use parameter 'group_mapping' in 'clone_items'
+        # get group membership from source Portal -> alternatively use parameter 'group_mapping' in 'clone_items'
         logger.info("Share target Item")
         share_options = source_item.shared_with
         target_groups = []
